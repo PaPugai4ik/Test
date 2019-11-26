@@ -6,9 +6,11 @@ using UnityEngine.UI;
 
 public class SettingsSvarca : MonoBehaviour
 {
+    string[] start = new string[] { "3", "2", "1", "Go!" };
+    [SerializeField] GameObject t_Timer;
     [SerializeField]GameObject point;
     float Sensitivity=1;
-    float Timer = 4f;
+    int Timer = 4;
     [SerializeField] GameObject Panel;
     bool isPause=false;
     bool isStartSvarca = false;
@@ -19,45 +21,39 @@ public class SettingsSvarca : MonoBehaviour
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space)&&isPause==false&&isStartSvarca==false)
+        if (Input.GetKeyDown(KeyCode.Space)&&isPause==false)
         {
-            isStartSvarca = !isStartSvarca;
-            while (Timer <= 0)
-            {
-                StartCoroutine(StartSvarca());
-            }
-            Cursor.visible = !Cursor.visible;
-            point.SetActive(!point.activeSelf);
+            StartCoroutine(StartSvarca());
+
         }
 
         if (Cursor.visible == false)
         {
             point.transform.Translate(new Vector3(Input.GetAxis("Mouse X") * Sensitivity, Input.GetAxis("Mouse Y") * Sensitivity, 0));
-            Debug.Log(Input.mousePosition);
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.P)&&Cursor.visible==true&&!t_Timer.activeSelf)
         {
-            isPause = !isPause;
             Panel.SetActive(!Panel.activeSelf);
-            point.SetActive(false);
-            Cursor.visible = true;
-
-        }
-        if (isPause)
-        {
-            Time.timeScale = 0;
-        }
-        else
-        {
-            Time.timeScale = 1;
         }
     }
     IEnumerator StartSvarca()
     {
-        yield return new WaitForSeconds(1);
-        Timer -= 1;
-
+        
+        if (Cursor.visible == true)
+        {
+            t_Timer.SetActive(true);
+            for (int i = 0; i < Timer;)
+            {
+                t_Timer.GetComponent<Text>().text = start[i];
+                yield return new WaitForSeconds(0.9f);
+                i++;
+            }
+            t_Timer.SetActive(false);
+        }
+        Cursor.visible = !Cursor.visible;
+        point.SetActive(!point.activeSelf);
+        Timer = start.Length;
     }
     public void OnStart()
     {
